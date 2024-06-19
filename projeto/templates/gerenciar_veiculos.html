@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Veículos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        input[type="text"], input[type="number"], select {
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        input[type="submit"], button, .btn-back {
+            padding: 10px;
+            background-color: #6c757d; /* Cor do botão voltar */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none; /* Remove sublinhado do link */
+            text-align: center;
+            display: inline-block;
+        }
+        input[type="submit"]:hover, button:hover, .btn-back:hover {
+            background-color: #5a6268; /* Cor ao passar o mouse */
+        }
+        .btn-delete {
+            background-color: #dc3545;
+        }
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+        .btn-edit {
+            background-color: #007bff;
+        }
+        .btn-edit:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciar Veículos</h1>
+        <form id="veiculo-form" method="POST" action="/gerenciar_veiculos">
+            <input type="hidden" name="veiculo_id" value="{{ editar.id if editar else '' }}">
+            <label for="tipo_veiculo">Tipo de Veículo:</label>
+            <select name="tipo_veiculo" id="tipo_veiculo" required>
+                <option value="">Selecione</option>
+                <option value="carro" {{ 'selected' if editar and editar.tipo == 'carro' else '' }}>Carro</option>
+                <option value="moto" {{ 'selected' if editar and editar.tipo == 'moto' else '' }}>Moto</option>
+                <option value="caminhao" {{ 'selected' if editar and editar.tipo == 'caminhao' else '' }}>Caminhão</option>
+            </select>
+            <label for="marca">Marca:</label>
+            <input type="text" name="marca" id="marca" value="{{ editar.marca if editar else '' }}" required>
+            <label for="modelo">Modelo:</label>
+            <input type="text" name="modelo" id="modelo" value="{{ editar.modelo if editar else '' }}" required>
+            <label for="ano">Ano:</label>
+            <input type="number" name="ano" id="ano" value="{{ editar.ano if editar else '' }}" required>
+            <label for="preco_por_dia">Preço por Dia:</label>
+            <input type="number" name="preco_por_dia" id="preco_por_dia" value="{{ editar.preco_por_dia if editar else '' }}" step="0.01" required>
+            <input type="submit" value="Salvar">
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Ano</th>
+                    <th>Preço por Dia</th>
+                    <th>Tipo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for veiculo in veiculos %}
+                <tr id="veiculo-{{ veiculo.id }}">
+                    <td>{{ veiculo.id }}</td>
+                    <td>{{ veiculo.marca }}</td>
+                    <td>{{ veiculo.modelo }}</td>
+                    <td>{{ veiculo.ano }}</td>
+                    <td>{{ veiculo.preco_por_dia }}</td>
+                    <td>{{ veiculo.tipo }}</td>
+                    <td>
+                        <form method="POST" action="/gerenciar_veiculos" style="display:inline;">
+                            <input type="hidden" name="veiculo_id" value="{{ veiculo.id }}">
+                            <input type="hidden" name="action" value="edit">
+                            <input type="submit" value="Editar" class="btn-edit">
+                        </form>
+                        <form method="POST" action="/gerenciar_veiculos" style="display:inline;">
+                            <input type="hidden" name="veiculo_id" value="{{ veiculo.id }}">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="submit" value="Deletar" class="btn-delete">
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/" class="btn-back">Voltar</a>
+    </div>
+</body>
+</html>
